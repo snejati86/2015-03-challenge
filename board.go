@@ -52,6 +52,7 @@ func initSearch(board *[16][16]bool,togo int,x int,y int,ship *Ship) bool {
 	fmt.Println("we have "+strconv.Itoa(togo)+ " to go in "+strconv.Itoa(x)+" and "+strconv.Itoa(y))
 	var points []Point
 	var left = togo
+
 	//Check left
 	for  i:=x ; i < len(board[0]) ; i++{
 		if  !board[i][y]{

@@ -11,6 +11,7 @@ func TestBoardPlacement(*testing.T){
 	board:=&board{}
 	board._board=[16][16]bool{}
 	board.PlaceShip(ship)
+
 	PrintBoard(board._board)
 }
 
