@@ -8,9 +8,10 @@ type Player struct {
 	turns_played int
 	ships []Ship
 	name string
+	pboard board
 }
 
-func ( player *Player ) ProposePoint(point *Point) bool{
+func ( player *Player ) ProposePoint(point Point) bool{
 	var res bool
 	for _,ship:=range player.ships {
 		if ship.ProposePoint(point){

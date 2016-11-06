@@ -5,6 +5,8 @@ import (
 	"strconv"
 )
 
+
+
 type Game struct {
 	players []*Player
 	parser *InputParser
@@ -34,7 +36,7 @@ func ( game *Game) BeginGame(){
 					otherPlayer=game.players[0]
 				}
 				fmt.Println("Firing at position "+strconv.Itoa(x)+","+strconv.Itoa(y))
-				if otherPlayer.ProposePoint(&Point{x,y}){
+				if otherPlayer.ProposePoint(Point{x,y}){
 					player.score++
 					fmt.Println("Player "+strconv.Itoa(i)+" confirmed hit!")
 					fmt.Println("Your current score is "+strconv.Itoa(player.score))

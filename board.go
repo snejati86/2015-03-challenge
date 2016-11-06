@@ -4,6 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"strconv"
+	"math/rand"
+	"time"
 )
 
 type Point struct {
@@ -17,7 +19,11 @@ type board struct {
 func PrintBoard(board [16][16]bool ) {
 	for i := 0; i < 16; i++ {
 		for j:=0;j<16;j++{
-			fmt.Print(board[i][j])
+			if board[i][j]{
+				fmt.Print("X")
+			}else{
+				fmt.Print(".")
+			}
 			fmt.Print(" ")
 		}
 		fmt.Println()
@@ -25,27 +31,132 @@ func PrintBoard(board [16][16]bool ) {
 	fmt.Println("===================================")
 }
 func ( b *board) PlaceShip(ship *Ship) error {
-	rem:=ship.Length
-	placed:=false
-	for i := 0; i < 16; i++ {
-		if ( !placed  ){
-			for j:=0 ; j < 16 ; j++{
-				if !b._board[i][j]{
-					res:= initSearch(&b._board,rem,i,j,ship)
-					if ( res ){
-						return nil
-					}
-				}
-				if ( rem == 0 ){
-					placed = true
-					break
-				}
-			}
-		}else{
-			break
+
+	visited:=make(map[*Point]bool)
+	original:=b._board
+	points:=[]Point{}
+	for {
+		fmt.Println("Getting the next point")
+		if  len(visited) == 16*16{
+			return errors.New("Can not place the ship.")
 		}
+		rem:=ship.Length
+		//placed:=false
+		//Pick a point
+		rand.Seed(time.Now().UTC().UnixNano())
+		x:=rand.Intn(16)
+		y:=rand.Intn(16)
+		visited[&Point{x,y}] = true
+		cx:=x
+		cy:=y
+		found:=false
+		fmt.Println("search at point "+strconv.Itoa(cx)+","+strconv.Itoa(cy))
+		fmt.Println("remiaing "+strconv.Itoa(rem))
+
+
+		for cy >=0  && !b._board[cx][cy] {
+			b._board[cx][cy]= true
+			if rem == 0 {
+				found = true
+				break
+			}
+			cy--
+			rem--
+			points=append(points,Point{cx,cy})
+			fmt.Println("Place at point "+strconv.Itoa(cx)+","+strconv.Itoa(cy))
+
+
+		}
+		if found {
+			break
+		}else{
+			b._board=original
+			cy=y
+			rem=ship.Length
+			points=[]Point{}
+		}
+		fmt.Println("search at point "+strconv.Itoa(cx)+","+strconv.Itoa(cy))
+		fmt.Println("remiaing "+strconv.Itoa(rem))
+
+		for cy <16  && !b._board[cx][cy] {
+			b._board[cx][cy]= true
+			if rem == 0 {
+				found = true
+				break
+			}
+			cy++
+			rem--
+			fmt.Println("Place at point "+strconv.Itoa(cx)+","+strconv.Itoa(cy))
+
+			points=append(points,Point{cx,cy})
+
+		}
+		if found {
+			break
+		}else{
+			b._board=original
+			cy=y
+			cx=x
+			rem=ship.Length
+			points=[]Point{}
+		}
+
+		fmt.Println("search at point "+strconv.Itoa(cx)+","+strconv.Itoa(cy))
+		fmt.Println("remiaing "+strconv.Itoa(rem))
+
+		for cx >= 0  && !b._board[cx][cy] {
+			b._board[cx][cy]= true
+			if rem == 0 {
+				found = true
+				break
+			}
+
+			cx--
+			rem--
+			fmt.Println("Place at point "+strconv.Itoa(cx)+","+strconv.Itoa(cy))
+			points=append(points,Point{cx,cy})
+
+
+		}
+		if found {
+			break
+		}else{
+			b._board=original
+			cx=x
+			rem=ship.Length
+			points=[]Point{}
+		}
+		fmt.Println("search at point "+strconv.Itoa(cx)+","+strconv.Itoa(cy))
+		fmt.Println("remiaing "+strconv.Itoa(rem))
+
+		for cx <16  && !b._board[cx][cy] {
+			b._board[cx][cy]= true
+			if rem == 0 {
+				found = true
+				break
+			}
+
+
+			cx++
+			rem--
+			fmt.Println("Place at point "+strconv.Itoa(cx)+","+strconv.Itoa(cy))
+			points=append(points,Point{cx,cy})
+
+		}
+		if found {
+			break
+		}else{
+			points=[]Point{}
+			b._board=original
+
+		}
+
+
+
 	}
-	return errors.New("Not found.")
+	fmt.Println("We are here")
+	ship.AssignPoints(points)
+	return nil
 }
 
 func initSearch(board *[16][16]bool,togo int,x int,y int,ship *Ship) bool {
@@ -96,3 +207,4 @@ func initSearch(board *[16][16]bool,togo int,x int,y int,ship *Ship) bool {
 
 
 }
+
