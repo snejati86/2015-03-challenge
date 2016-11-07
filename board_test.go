@@ -2,22 +2,18 @@ package main
 
 import (
 	"testing"
-	"fmt"
 )
 
 func TestBoardPlacement(*testing.T){
-	ship:=&Ship{}
-	ship.Length=6
-	ship.Name="Dora"
+	p:=NewPlayer("Sina")
 
-	ship2:=&Ship{}
-	ship2.Length=15
-	ship2.Name="Dorsa"
-	board:=&board{}
-	board._board=[16][16]bool{}
+	for i:=0;i<6;i++{
+		p.pboard.PlaceShip(GetRandomShip())
+	}
+
+/*	ship:=GetRandomShip()
 	board.PlaceShip(ship)
-	board.PlaceShip(ship2)
 	fmt.Println(ship.Points)
-	PrintBoard(board._board)
+	PrintBoard(board._board)*/
 }
 

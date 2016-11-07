@@ -14,11 +14,20 @@ type Game struct {
 }
 
 func (game *Game) InitGame(){
-	player1 := &Player{}
-	player2 := &Player{}
+	player1 := NewPlayer("Me")
+	player2 := NewPlayer("Mo")
+
 	game.players = append(game.players,player1)
 	game.players = append(game.players,player2)
 	game.parser = &InputParser{}
+	for i:=0;i<6;i++{
+		ship1:=GetRandomShip()
+		ship2:=GetRandomShip()
+		player1.pboard.PlaceShip(ship1)
+		player1.ships=append(player1.ships,*ship1)
+		player2.pboard.PlaceShip(ship2)
+		player2.ships=append(player2.ships,*ship2)
+	}
 }
 
 func ( game *Game) BeginGame(){
@@ -27,19 +36,31 @@ func ( game *Game) BeginGame(){
 		if ( !gameEnd ){
 			for i,player:= range game.players{
 				fmt.Println("Player "+strconv.Itoa(i)+" turn : ")
+				fmt.Println("===============================================")
+
+				PrintBoard(player.fired)
+				fmt.Println("===============================================")
+
 				x,y:=game.parser.ParsePoint()
-				var otherPlayer *Player
 				// UGLY !
+				var otherPlayer *Player
 				if (i ==0 ){
 					otherPlayer=game.players[1]
 				}else{
 					otherPlayer=game.players[0]
 				}
+				PrintBoard(otherPlayer.pboard._board)
 				fmt.Println("Firing at position "+strconv.Itoa(x)+","+strconv.Itoa(y))
-				if otherPlayer.ProposePoint(Point{x,y}){
+				if h,s:=otherPlayer.ProposePoint(Point{x,y});h==true{
 					player.score++
+					player.fired[x][y]=true
 					fmt.Println("Player "+strconv.Itoa(i)+" confirmed hit!")
 					fmt.Println("Your current score is "+strconv.Itoa(player.score))
+					if s == true{
+						fmt.Println("BOOM XXXXXXX BOOM")
+						fmt.Println("===============================================")
+						fmt.Println("SHIP SANK!")
+					}
 				}else{
 					fmt.Println("Player "+strconv.Itoa(i)+" missed")
 
